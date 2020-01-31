@@ -3,6 +3,8 @@
 #bioinfoclust01.cnam.fr 
 #QC (prunning/500kb de tout genes)  Je suis sur HG37
 
+#J'ai besoin de combien est le seuil des snp manquant en meta analyse 
+
 cd /home/mrahmouni/Myriam_2020/data_myriam_test/chanel
 
 #Déplacer les .md5 dans un dossier aprt 
@@ -34,8 +36,15 @@ for j in list-file-relachement list-file-lentigine list-file-ride
 		done
 	done
 
-#Creer file2 channel filtre ld 0.8 
-#http://grch37.ensembl.org/Homo_sapiens/Tools/LD
+#Creer file1 channel filtre ld 0.8 
+
+	#retrouver les rs de mes snp 
+	#awk recuperer la liste 
+	# tr changer les ':' en \t 
+	#script python qui à partir du .ped de base retrouve les rs 
+	#recuperer la liste des RS 
+	#http://grch37.ensembl.org/Homo_sapiens/Tools/LD
+	#python recrer le fichier avec uniquement les snp sans ld *
 
 
 
