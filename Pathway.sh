@@ -85,15 +85,27 @@ ls *-file1 > list
 cd .. 
 cd TAIZOU_chinois
 
-awk < TAIZOU_chinois < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; Laxity_Pvalue=$20} {print CP	chr	pos	Laxity_Pvalue} '> Laxity
+awk < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; Laxity_Pvalue=$20} {print CP	chr	pos	Laxity_Pvalue} '> Laxity
 
-awk < TAIZOU_chinois < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; Wrinkle_Pvalue=$16} {print CP	chr	pos	Wrinkle_Pvalue} '> Wrinkle
+awk < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; Wrinkle_Pvalue=$16} {print CP	chr	pos	Wrinkle_Pvalue} '> Wrinkle
 
-awk < TAIZOU_chinois < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; PigmentedSpots_Pvalue=$20} {print CP	chr	pos	PigmentedSpots_Pvalue} '> lentigines
+awk < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; PigmentedSpots_Pvalue=$20} {print CP	chr	pos	PigmentedSpots_Pvalue} '> lentigines
 
 
 
 ### Meta-analyses 
+
+
+### préparation exemple 1000genome
+
+sed '/##/d' < exemple_1000_genomes > exemple_1000_genomes_sans#
+for i in {1..22}
+	do echo ${i} 
+	awk < exemple_1000_genomes_sans# ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1 && chr=='${i}'){print chr,	pos,	rs}'> resultat-${i}
+	done
+
+===> 
+
 
 
 #Input file 2: SNP-gene mapping : SNP	gene	dist2gene
