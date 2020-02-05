@@ -12,53 +12,65 @@
 # c'est ok pour le serveur ld ? population oui avant je vais garder que les snp dans le fichier de mapping 
 # base de donnée pathway du tuto? non celle du lien 
 # seuil ld 0.8 ? oui 
+#zcat file.gz   to view the contenent
 
+##################################PREPARER LES DONNEES DE 1000 GENOME##################################
 
-cd /home/mrahmouni/Myriam_2020/data_myriam_test/chanel
-
-#Déplacer les .md5 dans un dossier aprt 
-ls *.md5 > list-md5 
-mkdir md5-files 
-for i in `cat list-md5`
+cd /home/mrahmouni/Myriam_2020/Stage2020 
+### préparation exemple 1000genome et test script.py 
+mkdir results_1000g
+sed '/##/d' < exemple_1000_genomes > exemple_1000_genomes_sans#
+for i in {1..22}
 	do
-	mv /home/mrahmouni/Myriam_2020/data_myriam_test/chanel/${i} /home/mrahmouni/Myriam_2020/data_myriam_test/chanel/md5-files/${i}
+	awk < exemple_1000_genomes_sans# ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1 && chr=='${i}'){print chr,	pos,	rs}'> /home/mrahmouni/Myriam_2020/Stage2020/results_1000g/chr${i}_pos_rs
+	done
+rm exemple_1000_genomes_sans#
+
+###################Créer les files1 chr par chr de chanel############################################ 
+cd Myriam_2020/Stage2020/data_myriam_copie/chanel
+#Déplacer les .md5 dans un dossier aprt 
+mkdir md5-files 
+ls *.md5 > list-md5.txt
+for i in `cat list-md5.txt`
+	do
+	mv /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/${i} /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/md5-files
 	done
 
-#Input file 1: GWAS single-SNP results (after QC) :  rsid	Chi-2 or p-val
-
-#Creer file1 chanel ch:po
 ls *.relachement_z.snptest.gz > list-file-relachement
 ls *.lentigine_z.snptest.gz > list-file-lentigine
 ls *.ride_z.snptest.gz > list-file-ride
 
-mkdir relachement_chr-pos-pval-files
-mkdir lentigine_chr-pos-pval-files
-mkdir ride_chr-pos-pval-files
+mkdir file_1_results 
+cd file_1_results
+mkdir relachement_chr_pos_files_1 lentigine_chr_pos_files_1 ride_chr_pos_files_1
+cd .. 
 
 for j in list-file-relachement list-file-lentigine list-file-ride
 	do 
 	for i in `cat ${j}`
 		do
-		gzip -d ${i}
-		#info score = 0.3
-		awk < ${i::-3} '(NR==1) print {rsid	pvalue} (NR>=1){snp=$1;pvalue=$21}(NR>=1){print snp,	pvalue}' > /home/mrahmouni/Myriam_2020/data_myriam_test/chanel/${j:10}_chr-pos-pval-files/${i::-11}-chr-pos
+		#gzip -d ${i}
+		sed '/#/d' < ${i::-3} > ${i::-3}_sans#
+		#info score = 0.3 never forget 
+		awk < ${i::-3}_sans# '(NR==1) {print "CHR POS pvalue"} (NR>1){chr=$3;pos=$4;pvalue=$21}(NR>1){print chr, pos, pvalue}' > /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/file_1_results/${j:10}_chr_pos_files_1/${i::-11}_chr_pos_files_1
+		rm ${i::-3}_sans#
 		done
 	done
 
-#Creer file1 channel filtre ld 0.8 
+#Retrouver les rs de mes SNP 
+cd file_1_results
+mkdir relachement_rs_pval_files_1
+for i in {1..22}
+	#choufha el mochkla hedhi 	
+	do python3 ./home/mrahmouni/Myriam_2020/Stage2020/find-rs.py /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/file_1_results/lentigine_chr_pos_files_1/CERIES.chr${i}.mode1.lentigine_z_chr_pos_files_1 ./home/mrahmouni/Myriam_2020/Stage2020/results_1000g/chr${i}_pos_rs
+	done
 
-	#retrouver les rs de mes snp 
-	#awk recuperer la liste 
-	# tr changer les ':' en \t 
-	#script python qui à partir du .ped de base retrouve les rs 
-	#recuperer la liste des RS 
-	#http://grch37.ensembl.org/Homo_sapiens/Tools/LD
+#garder que ce qui'il y a dans le fichier map #FICHIER .MAP HG18!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+	#Calcule ld http://grch37.ensembl.org/Homo_sapiens/Tools/LD à la main 
 	#python recrer le fichier avec uniquement les snp sans ld *
 
+###################Créer les files1 chr par chr de SALIA (rs existants) 
 
-
-
-####SALIA 
 	#Creer file 1 salia rs	pval pour les 3 phenos 
 cd 
 cd home/mrahmouni/Myriam_2020/Stage2020/data_myriam/SALIA_allemand/laxity
@@ -96,15 +108,7 @@ awk < header ' (NR==1){print CP	chr	pos	pval} (NR >= 1) {CP=$1; chr=$2; pos=$3; 
 ### Meta-analyses 
 
 
-### préparation exemple 1000genome
 
-sed '/##/d' < exemple_1000_genomes > exemple_1000_genomes_sans#
-for i in {1..22}
-	do echo ${i} 
-	awk < exemple_1000_genomes_sans# ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1 && chr=='${i}'){print chr,	pos,	rs}'> resultat-${i}
-	done
-
-===> 
 
 
 
