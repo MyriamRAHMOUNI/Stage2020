@@ -14,17 +14,67 @@
 # seuil ld 0.8 ? oui 
 #zcat file.gz   to view the contenent
 
-##################################PREPARER LES DONNEES DE 1000 GENOME##################################
 
-cd /home/mrahmouni/Myriam_2020/Stage2020 
-### préparation exemple 1000genome et test script.py 
-mkdir results_1000g
-sed '/##/d' < exemple_1000_genomes > exemple_1000_genomes_sans#
+#selection des logs 
+
+#preparer la liste des snp à garder dans l'analyse 
+cd Myriam_2020/data_myriam/
+awk < snpgenemap.hg19 '(NR>1){rs=$1} (NR>1){print rs}' > 1000genomes/list_extract_snp
+cd 1000genomes
+#EUR.txt EAS.txt
+awk < integrated_call_samples_v2.20130502.ALL.ped '(NR>1){id=$2;pop=$7;related=$8} (NR>=1) && (related=="unrel") && (pop=="CEU"||pop=="TSI"||pop=="FIN"||pop=="GBR"||pop=="IBS") {print id}' > EUR.txt #317 individus
+
+awk < integrated_call_samples_v2.20130502.ALL.ped '(NR>1){id=$2;pop=$7;related=$8} (NR>=1) && (related=="unrel") && (pop=="CHB"||pop=="JPT"||pop=="CHS"||pop=="CDX"||pop=="KHV") {print id}' > EAS.txt #437 individus 
+
+#================> 56459228 list_extract_snp
+
+ls *.vcf.gz > list-files-1000g
+
+mkdir results_snp_1000g
+mkdir results_eur_1000g
+mkdir results_eas_1000g
+for i in `cat  list-files-1000g`
+	do
+	#extraire les snp dans le map de 1000g
+	vcftools --gzvcf ${i} --snps list_extract_snp --recode --out results_snp_1000g/${i::-7}_snps
+	#extraire les population europenne avec individus non relié
+	vcftools --vcf results_snp_1000g/${i::-7}_snps.recode.vcf --keep EUR.txt --recode --out results_eur_1000g/${i::-7}_eur
+	#extraire les population eas avec individus non relié
+	vcftools --vcf results_snp_1000g/${i::-7}_snps.recode.vcf --keep EAS.txt --recode --out results_eas_1000g/${i}_eas
+	rm results_snp_1000g/${i::-7}_snps
+	done
+
+#calcule ld garder que les snps en ld < 0.8
+cd results_eas_1000g
+mkdir res_prun_eas
+ls *.vcf > list-eas-1000g
+for i in `cat  list-eas-1000g`
+	do
+	./plink2 --vcf ${i} --indep-pairwise 50 5 0.8 --out res_prun_eas/${i}_propre_eas
+	done
+cd ..
+cd results_eur_1000g 
+ls *.vcf > list-eur-1000g
+mkdir res_prun_eur
+for i in `cat  list-eur-1000g`
+	do
+	./plink2 --vcf ${i} --indep-pairwise 50 5 0.8 --out res_prun_eur/${i}_propre_eur
+	done
+#======================> on prend à chaque fois les prune.in apres c'est les snps qui existent sans le fchier map avec ld < 0.8
+
+# Retrouver les ch po de ces liste rs 
+mkdir results_preparation_1000g
+mkdir fichiers_ch_pos_rs_propre
+#eas
 for i in {1..22}
 	do
-	awk < exemple_1000_genomes_sans# ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1 && chr=='${i}'){print chr,	pos,	rs}'> /home/mrahmouni/Myriam_2020/Stage2020/results_1000g/chr${i}_pos_rs
+	sed '/##/d' | awk < results_eas_1000g/ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1){print chr, pos, rs}' > results_preparation_1000g/chr${i}_prep
+	awk 'NR==FNR{a[$1]=$1; next} ($3 in a){print $1, $2, $3}' results_eas_1000g/res_prun/file1.in results_preparation_1000g/chr${i}_prep > fichiers_ch_pos_rs_propre/chr${i}_pos_rs_propre
+	#=> listes rs ch pos
+
+sed '/##/d' | awk 'NR==FNR{a[$1]=$1; next} ($3 in a){print $1, $2, $3}' ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf_propre_eas.prune > voila
+
 	done
-rm exemple_1000_genomes_sans#
 
 ###################Créer les files1 chr par chr de chanel############################################ 
 cd Myriam_2020/Stage2020/data_myriam_copie/chanel
@@ -59,13 +109,24 @@ for j in list-file-relachement list-file-lentigine list-file-ride
 
 #Retrouver les rs de mes SNP 
 cd file_1_results
+mkdir lentigine_rs_pval_files_1
 mkdir relachement_rs_pval_files_1
+mkdir ride_rs_pval_files_1
+cd ..
+cd ..
+cd ..
 for i in {1..22}
-	#choufha el mochkla hedhi 	
-	do python3 ./home/mrahmouni/Myriam_2020/Stage2020/find-rs.py /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/file_1_results/lentigine_chr_pos_files_1/CERIES.chr${i}.mode1.lentigine_z_chr_pos_files_1 ./home/mrahmouni/Myriam_2020/Stage2020/results_1000g/chr${i}_pos_rs
+	do python3 find-rs.py data_myriam_copie/chanel/file_1_results/lentigine_chr_pos_files_1/CERIES.chr${i}.mode1.lentigine_z_chr_pos_files_1 results_1000g/chr${i}_pos_rs data_myriam_copie/chanel/file_1_results/lentigine_rs_pval_files_1
 	done
 
-#garder que ce qui'il y a dans le fichier map #FICHIER .MAP HG18!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+
+#garder que ce qui'il y a dans le fichier map
+#meme principe tu va voir 
+
+
+
+
+
 	#Calcule ld http://grch37.ensembl.org/Homo_sapiens/Tools/LD à la main 
 	#python recrer le fichier avec uniquement les snp sans ld *
 
@@ -131,3 +192,19 @@ awk < file.map '(NR==1) print {SNP	gene	dist2gene} (NR>=1){snp=$1;gene=$2;dist2g
 	# KEGG / go biological process 
 
 #=========> Calculate_gsea.pl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#vcf-merge liste | gzip -c > multi-échantillon.vcf.gz
