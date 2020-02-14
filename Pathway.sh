@@ -63,21 +63,33 @@ for i in `cat  list-eur-1000g`
 #======================> on prend à chaque fois les prune.in apres c'est les snps qui existent sans le fchier map avec ld < 0.8
 
 # Retrouver les ch po de ces liste rs 
-mkdir results_preparation_1000g
-mkdir fichiers_ch_pos_rs_propre
 #eas
+cd .. 
+cd results_eas_1000g
+mkdir san_##
+mkdir fichiers_ch_pos_rs_propre
 for i in {1..22}
 	do
-	sed '/##/d' | awk < results_eas_1000g/ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf ' (NR==1){print "CHR POS RS"} (NR>1){chr=$1;pos=$2;rs=$3}(NR>1){print chr, pos, rs}' > results_preparation_1000g/chr${i}_prep
-	awk 'NR==FNR{a[$1]=$1; next} ($3 in a){print $1, $2, $3}' results_eas_1000g/res_prun/file1.in results_preparation_1000g/chr${i}_prep > fichiers_ch_pos_rs_propre/chr${i}_pos_rs_propre
-	#=> listes rs ch pos
-
-sed '/##/d' | awk 'NR==FNR{a[$1]=$1; next} ($3 in a){print $1, $2, $3}' ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf_propre_eas.prune > voila
-
+	sed '/##/d' ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf > san_##/ALL.chr${i}_EAS_san_##
+	awk 'NR==FNR{a[$3]=$1" "$2" "$3; next} ($1 in a){print a[$1], a[$2], a[$3]}' san_##/ALL.chr${i}_EAS_san_## res_prun_eas/ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz_eas.recode.vcf_propre_eas.prune.in > fichiers_ch_pos_rs_propre/chr${i}_eas_pos_rs_propre
 	done
+	#=> listes rs ch pos eas
+#eur
+cd ..
+cd results_eur_1000g 
+mkdir san_##
+mkdir fichiers_ch_pos_rs_propre
+for i in {1..22}
+	do
+	sed '/##/d' ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_eur.recode.vcf > san_##/ALL.chr${i}_EUR_san_##
+	awk 'NR==FNR{a[$3]=$1" "$2" "$3; next} ($1 in a){print a[$1], a[$2], a[$3]}' san_##/ALL.chr${i}_EUR_san_## res_prun_eur/ALL.chr${i}.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes_eur.recode.vcf_propre_eur.prune.in > fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre
+	done
+	#=> listes rs ch pos eas
+
+#donc la j'ai les rs ch pos des sn que je vais prendre chez chanel et salia : /home/mrahmouni/Myriam_2020/data_myriam/1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre et chez les chinois : /home/mrahmouni/Myriam_2020/data_myriam/1000genomes/results_eas_1000g/fichiers_ch_pos_rs_propre/chr${i}_eas_pos_rs_propre
 
 ###################Créer les files1 chr par chr de chanel############################################ 
-cd Myriam_2020/Stage2020/data_myriam_copie/chanel
+cd Myriam_2020/data_myriam/chanel
 #Déplacer les .md5 dans un dossier aprt 
 mkdir md5-files 
 ls *.md5 > list-md5.txt
@@ -85,44 +97,48 @@ for i in `cat list-md5.txt`
 	do
 	mv /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/${i} /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/md5-files
 	done
-
-ls *.relachement_z.snptest.gz > list-file-relachement
-ls *.lentigine_z.snptest.gz > list-file-lentigine
-ls *.ride_z.snptest.gz > list-file-ride
-
+######
+	#info score = 0.3 never forget 
 mkdir file_1_results 
 cd file_1_results
-mkdir relachement_chr_pos_files_1 lentigine_chr_pos_files_1 ride_chr_pos_files_1
-cd .. 
-
-for j in list-file-relachement list-file-lentigine list-file-ride
-	do 
-	for i in `cat ${j}`
-		do
-		#gzip -d ${i}
-		sed '/#/d' < ${i::-3} > ${i::-3}_sans#
-		#info score = 0.3 never forget 
-		awk < ${i::-3}_sans# '(NR==1) {print "CHR POS pvalue"} (NR>1){chr=$3;pos=$4;pvalue=$21}(NR>1){print chr, pos, pvalue}' > /home/mrahmouni/Myriam_2020/Stage2020/data_myriam_copie/chanel/file_1_results/${j:10}_chr_pos_files_1/${i::-11}_chr_pos_files_1
-		rm ${i::-3}_sans#
-		done
-	done
-
-#Retrouver les rs de mes SNP 
-cd file_1_results
-mkdir lentigine_rs_pval_files_1
-mkdir relachement_rs_pval_files_1
-mkdir ride_rs_pval_files_1
-cd ..
-cd ..
-cd ..
+mkdir relachement_files_1 lentigine_files_1 ride_files_1
+cd lentigine 
 for i in {1..22}
-	do python3 find-rs.py data_myriam_copie/chanel/file_1_results/lentigine_chr_pos_files_1/CERIES.chr${i}.mode1.lentigine_z_chr_pos_files_1 results_1000g/chr${i}_pos_rs data_myriam_copie/chanel/file_1_results/lentigine_rs_pval_files_1
+	do
+	zcat CERIES.chr${i}.mode1.lentigine_z.snptest.gz | sed '/#/d' > CERIES.chr${i}.mode1.lentigine_z.snptest_sans#
+	awk 'NR==FNR{a[$4]=$4" "$21; next} ($2 in a){print $3" "a[$2]}' CERIES.chr${i}.mode1.lentigine_z.snptest_sans# ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > lentigine_chr${i}_file1_pos
+	rm CERIES.chr${i}.mode1.lentigine_z.snptest_sans#
+	awk < lentigine_chr${i}_file1_pos '(NR==1){print "Marker \t P-value"} (NR>=1){snp=$1;pvalue=$3} {print snp,"\t"pvalue}' > ../file_1_results/lentigine_files_1/lentigine_chr${i}_file1	
+	rm lentigine_chr${i}_file1_pos
 	done
+cd ..
+cd relachement 
+
+for i in {1..22}
+	do
+	zcat CERIES.chr${i}.mode1.relachement_z.snptest.gz | sed '/#/d' > CERIES.chr${i}.mode1.relachement_z.snptest_sans#
+	awk 'NR==FNR{a[$4]=$4" "$21; next} ($2 in a){print $3" "a[$2]}' CERIES.chr${i}.mode1.relachement_z.snptest_sans# ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > relachement_chr${i}_file1_pos
+	rm CERIES.chr${i}.mode1.relachement_z.snptest_sans#
+	awk < relachement_chr${i}_file1_pos '(NR==1){print "Marker \t P-value"} (NR>=1){snp=$1;pvalue=$3} {print snp,"\t"pvalue}' > ../file_1_results/relachement_files_1/relachement_chr${i}_file1
+	rm relachement_chr${i}_file1_pos
+	done
+cd .. 
+cd ride 
+
+zcat CERIES.chr${i}.mode1.ride_z.snptest.gz | sed '/#/d' > CERIES.chr${i}.mode1.ride_z.snptest_sans#
+	awk 'NR==FNR{a[$4]=$4" "$21; next} ($2 in a){print $3" "a[$2]}' CERIES.chr${i}.mode1.ride_z.snptest_sans# ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > ride_chr${i}_file1_pos
+	rm CERIES.chr${i}.mode1.ride_z.snptest_sans#
+	awk < ride_chr${i}_file1_pos '(NR==1){print "Marker \t P-value"} (NR>=1){snp=$1;pvalue=$3} {print snp,"\t"pvalue}' > ../file_1_results/ride_files_1/ride_chr${i}_file1
+	rm ride_chr${i}_file1_pos
+	done
+
+
+#========> file 1 de chanel pret pour les 3 phénotypes dans /home/mrahmouni/Myriam_2020/data_myriam/chanel/file_1_results
 
 
 #garder que ce qui'il y a dans le fichier map
 #meme principe tu va voir 
-
+CERIES.chr10.mode1.lentigine_z.snptest.gz
 
 
 
