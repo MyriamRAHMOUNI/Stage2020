@@ -5,7 +5,7 @@
 #code ? zagfan1402
 
 
-# donnée meta analyse? il viennent 
+# donnée meta analyse?  
 # je peux utiliser les rs de chanel pour retrouver ceux des chinois ? non on va plutot utiliser 1000 genome chr par chr sans ouvrir les .gz 
 # ou sont les données des chinois ? juste devant toi ;)
 # fichier mapping celui du toto
@@ -195,49 +195,55 @@ cd Myriam_2020/data_myriam/SALIA_allemand
 cd laxity
 mkdir file_1_results
 for i in {1..22}
-	do awk 'NR==FNR{a[$26]=$26"\t"$5; next} ($3 in a){print a[$3]}' GWAS_Zlaxity_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/relachement_chr${i}_file1
+	do awk 'NR==FNR{a[$26]=$26"\t"$6; next} ($3 in a){print a[$3]}' GWAS_Zlaxity_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/relachement_chr${i}_file1
 	done
 cd file_1_results
 echo -e "Marker\tP_value" > header
-cat header relachement_chr10_file1 relachement_chr18_file1  relachement_chr4_file1 relachement_chr11_file1  relachement_chr19_file1 relachement_chr5_file1 relachement_chr12_file1 relachement_chr1_file1   relachement_chr6_file1 relachement_chr13_file1 relachement_chr20_file1 relachement_chr7_file1 relachement_chr14_file1 relachement_chr21_file1 relachement_chr8_file1 relachement_chr15_file1 relachement_chr22_file1 relachement_chr9_file1 relachement_chr16_file1 relachement_chr2_file1 relachement_chr17_file1 relachement_chr3_file1 > relachement_SALIA_all_file1 # 3665150
+cat header relachement_chr10_file1 relachement_chr18_file1 relachement_chr4_file1 relachement_chr11_file1 relachement_chr19_file1 relachement_chr5_file1 relachement_chr12_file1 relachement_chr1_file1 relachement_chr6_file1 relachement_chr13_file1 relachement_chr20_file1 relachement_chr7_file1 relachement_chr14_file1 relachement_chr21_file1 relachement_chr8_file1 relachement_chr15_file1 relachement_chr22_file1 relachement_chr9_file1 relachement_chr16_file1 relachement_chr2_file1 relachement_chr17_file1 relachement_chr3_file1 > relachement_SALIA_all_file1 # 3665150
 
 cd ../../lentigines 
 mkdir file_1_results
 for i in {1..22}
-	do awk 'NR==FNR{a[$26]=$26"\t"$5; next} ($3 in a){print a[$3]}' GWAS_Zpigment_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/lentigines_chr${i}_file1
+	do awk 'NR==FNR{a[$26]=$26"\t"$6; next} ($3 in a){print a[$3]}' GWAS_Zpigment_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/lentigines_chr${i}_file1
 	done
-cd file_1_results #houni
+cd file_1_results
 echo -e "Marker\tP_value" > header 
 cat header lentigines_chr10_file1 lentigines_chr18_file1 lentigines_chr4_file1 lentigines_chr11_file1 lentigines_chr19_file1 lentigines_chr5_file1 lentigines_chr12_file1 lentigines_chr1_file1 lentigines_chr6_file1 lentigines_chr13_file1 lentigines_chr20_file1 lentigines_chr7_file1 lentigines_chr14_file1 lentigines_chr21_file1 lentigines_chr8_file1 lentigines_chr15_file1 lentigines_chr22_file1 lentigines_chr9_file1 lentigines_chr16_file1 lentigines_chr2_file1 lentigines_chr17_file1 lentigines_chr3_file1  > lentigines_SALIA_all_file1 #3665150
 
 cd ../../wrinkles
 mkdir file_1_results
 for i in {1..22}
-	do awk 'NR==FNR{a[$26]=$26"\t"$5; next} ($3 in a){print a[$3]}' GWAS_Zwrinkles_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/rides_chr${i}_file1
+	do awk 'NR==FNR{a[$26]=$26"\t"$6; next} ($3 in a){print a[$3]}' GWAS_Zwrinkles_imputed_genotypes_chr${i}.txt ../../1000genomes/results_eur_1000g/fichiers_ch_pos_rs_propre/chr${i}_eur_pos_rs_propre > file_1_results/rides_chr${i}_file1
 	done
 cd file_1_results
 echo -e "Marker\tP_value" > header 
-cat header rides_chr10_file1 rides_chr16_file1 rides_chr21_file1  rides_chr6_file1 rides_chr11_file1 rides_chr17_file1  rides_chr22_file1 rides_chr7_file1 rides_chr12_file1 rides_chr18_file1 rides_chr2_file1 rides_chr8_file1 rides_chr13_file1 rides_chr19_file1 rides_chr3_file1 rides_chr9_file1 rides_chr14_file1 rides_chr1_file1 rides_chr4_file1 rides_chr15_file1 rides_chr20_file1 rides_chr5_file1 > rides_SALIA_all_file1 #3665150
-
-# Salia pathways  Done with 1249048 records (2416102 records skipped due to unrecognizable format) p val negative mais c'est pas ça !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+cat header rides_chr10_file1 rides_chr16_file1 rides_chr21_file1 rides_chr6_file1 rides_chr11_file1 rides_chr17_file1 rides_chr22_file1 rides_chr7_file1 rides_chr12_file1 rides_chr18_file1 rides_chr2_file1 rides_chr8_file1 rides_chr13_file1 rides_chr19_file1 rides_chr3_file1 rides_chr9_file1 rides_chr14_file1 rides_chr1_file1 rides_chr4_file1 rides_chr15_file1 rides_chr20_file1 rides_chr5_file1 > rides_SALIA_all_file1 #3665150
 
 cd 
 cd Myriam_2020/data_myriam
 
+##pathway salia
 # ride kegg
-mkdir SALIA_allemand/wrinkles/file_1_results/pathway_results
 
-perl calculate_gsea.pl SALIA_allemand/wrinkles/file_1_results/rides_SALIA_all_file1 c2.cp.kegg.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile rides_chanel_Kegg --pvalue_flag --logfile rides_chanel_Kegg --weight 1 --large_es > SALIA_allemand/wrinkles/file_1_results/pathway_results/rides_chanel_Kegg
+perl calculate_gsea.pl SALIA_allemand/wrinkles/file_1_results/rides_SALIA_all_file1 c2.cp.kegg.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_rides_salia_Kegg --pvalue_flag --logfile log_rides_salia_Kegg --weight 1 --large_es > Pathway_results/rides_salia_Kegg
+
+#ride go 
+perl calculate_gsea.pl SALIA_allemand/wrinkles/file_1_results/rides_SALIA_all_file1 c5.bp.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_rides_salia_go --pvalue_flag --logfile log_rides_salia_go --weight 1 --large_es > Pathway_results/rides_salia_go
 
 #lentigines kegg 
-
-mkdir SALIA_allemand/lentigines/file_1_results/pathway_results
-
-#sed '/-/d' < SALIA_allemand/lentigines/file_1_results/lentigines_SALIA_all_file1 > SALIA_allemand/lentigines/file_1_results/lentigines_SALIA_all_file1_sans
-
-perl calculate_gsea.pl SALIA_allemand/lentigines/file_1_results/lentigines_SALIA_all_file1_sans c2.cp.kegg.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile lentigines_SALIA_Kegg --pvalue_flag --logfile lentigines_SALIA_Kegg --weight 1 --large_es > SALIA_allemand/lentigines/file_1_results/pathway_results/lentigines_SALIA_Kegg
+perl calculate_gsea.pl SALIA_allemand/lentigines/file_1_results/lentigines_SALIA_all_file1 c2.cp.kegg.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_lentigines_salia_Kegg --pvalue_flag --logfile log_lentigines_salia_Kegg --weight 1 --large_es > Pathway_results/lentigine_salia_Kegg
 
 
+#lentigine go
+perl calculate_gsea.pl SALIA_allemand/lentigines/file_1_results/lentigines_SALIA_all_file1 c5.bp.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_lentigines_salia_go --pvalue_flag --logfile log_lentigines_salia_go --weight 1 --large_es > Pathway_results/lentigines_salia_go
+
+#relachement kegg 
+
+perl calculate_gsea.pl SALIA_allemand/laxity/file_1_results/relachement_SALIA_all_file1 c2.cp.kegg.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_relachement_salia_Kegg --pvalue_flag --logfile log_relachement_salia_Kegg --weight 1 --large_es > Pathway_results/relachement_salia_Kegg
+
+
+#relachement go
+perl calculate_gsea.pl SALIA_allemand/laxity/file_1_results/relachement_SALIA_all_file1 c5.bp.v7.0.symbols.gmt -map snpgenemap.hg19 -c 10000 --setstatfile stat_relachement_salia_go --pvalue_flag --logfile log_relachement_salia_go --weight 1 --large_es > Pathway_results/relachement_salia_go
 
 ### TAIZHOU 
 
