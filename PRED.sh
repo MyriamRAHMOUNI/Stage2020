@@ -1,6 +1,5 @@
 #!/bin/bash
-ssh leclersi@vlad.cnam.fr #fug7a7wy
-ssh sigrid@bioclustnew01.cnam.fr
+
 
 #********************************METAXCAN*************************************
 #Préparation des fichiers de 1000 gènome
